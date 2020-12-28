@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTL.TVMaze.Scraper.API", "src\RTL.TVMaze.Scraper.API\RTL.TVMaze.Scraper.API.csproj", "{FBFCD9FC-EB8E-4386-AE71-3E1CAEE7616D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2D7D1F29-DC5B-4202-A1BE-6CD83A840748}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{22FC9D00-E82F-4918-8CBA-35DCB4783D0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTL.TVMaze.Scraper.Domain", "src\RTL.TVMaze.Scraper.Domain\RTL.TVMaze.Scraper.Domain.csproj", "{67510388-3233-4A2D-A0A1-6CA8832FE6AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTL.TVMaze.Scraper.Application", "src\RTL.TVMaze.Scraper.Application\RTL.TVMaze.Scraper.Application.csproj", "{CF43F5CB-7490-44D5-8AAE-AAE234CD1E6A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBFCD9FC-EB8E-4386-AE71-3E1CAEE7616D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBFCD9FC-EB8E-4386-AE71-3E1CAEE7616D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBFCD9FC-EB8E-4386-AE71-3E1CAEE7616D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBFCD9FC-EB8E-4386-AE71-3E1CAEE7616D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67510388-3233-4A2D-A0A1-6CA8832FE6AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67510388-3233-4A2D-A0A1-6CA8832FE6AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67510388-3233-4A2D-A0A1-6CA8832FE6AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67510388-3233-4A2D-A0A1-6CA8832FE6AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF43F5CB-7490-44D5-8AAE-AAE234CD1E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF43F5CB-7490-44D5-8AAE-AAE234CD1E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF43F5CB-7490-44D5-8AAE-AAE234CD1E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF43F5CB-7490-44D5-8AAE-AAE234CD1E6A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FBFCD9FC-EB8E-4386-AE71-3E1CAEE7616D} = {2D7D1F29-DC5B-4202-A1BE-6CD83A840748}
+		{67510388-3233-4A2D-A0A1-6CA8832FE6AF} = {2D7D1F29-DC5B-4202-A1BE-6CD83A840748}
+		{CF43F5CB-7490-44D5-8AAE-AAE234CD1E6A} = {2D7D1F29-DC5B-4202-A1BE-6CD83A840748}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {756FB251-5F7A-4581-BF38-1776E4CEB1CE}
+	EndGlobalSection
+EndGlobal
