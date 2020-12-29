@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -31,9 +30,11 @@ namespace RTL.TVMaze.Scraper.Application.HttpClients
             if (tvShowsFromCache != null) return JsonSerializer.Deserialize<List<TVShow>>(tvShowsFromCache);
 
             var getShowsFromApiResponse = await GetTVShowsFromApi(cancellationToken);
-                        var getShowsWithCastEmbeddedResponses =
+            var getShowsWithCastEmbeddedResponses =
                 await GetTVShowsWithCastEmbeddedFromApi(
-                    getShowsFromApiResponse.Select(response => response.Id),
+                    getShowsFromApiResponse
+                        .Select(response => response.Id)
+                        .ToList(),
                     cancellationToken);
 
             var tvShows= getShowsWithCastEmbeddedResponses.Select(tvShowDto =>
@@ -61,15 +62,36 @@ namespace RTL.TVMaze.Scraper.Application.HttpClients
             return JsonSerializer.Deserialize<GetShowsResponse>(await apiResponse.Content.ReadAsStringAsync());
         }
 
-        private async Task<List<GetShowResponse>> GetTVShowsWithCastEmbeddedFromApi(IEnumerable<int> ids, CancellationToken cancellationToken)
+        private async Task<GetShowResponse> GetTVShowWithCastEmbeddedFromApi(int id, CancellationToken cancellationToken)
         {
-            var getShowWithCastEmbeddedTasks = ids.Select(id => _httpClient.GetAsync($"shows/{id}?embed=cast", cancellationToken));
-            var getShowsWithCastEmbeddedResponses = await Task.WhenAll(getShowWithCastEmbeddedTasks);
-            
-            return getShowsWithCastEmbeddedResponses
-                .Select(async response => await response.Content.ReadAsStringAsync())
-                .Select(task => JsonSerializer.Deserialize<GetShowResponse>(task.Result))
-                .ToList();
+            var apiResponse = await _httpClient.GetAsync($"shows/{id}?embed=cast", cancellationToken);
+            return JsonSerializer.Deserialize<GetShowResponse>(await apiResponse.Content.ReadAsStringAsync());
+        }
+
+        private async Task<List<GetShowResponse>> GetTVShowsWithCastEmbeddedFromApi(IList<int> ids, CancellationToken cancellationToken)
+        {
+            var result = new List<GetShowResponse>();
+
+            // Divide in batches to gain more control and avoid socket exhaustion due to number of concurrent http connections.
+            var batches = BuildBatches(ids, 10);
+            foreach (var batch in batches)
+            {
+                var getShowWithCastEmbeddedTasks = batch.Select(id => GetTVShowWithCastEmbeddedFromApi(id, cancellationToken));
+                var getShowsWithCastEmbeddedResponses = await Task.WhenAll(getShowWithCastEmbeddedTasks);
+                result.AddRange(getShowsWithCastEmbeddedResponses);
+            }
+
+            return result;
+        }
+
+        private IEnumerable<IEnumerable<T>> BuildBatches<T>(IList<T> fullList, int batchSize)
+        {
+            int total = 0;
+            while (total < fullList.Count)
+            {
+                yield return fullList.Skip(total).Take(batchSize);
+                total += batchSize;
+            }
         }
     }
 }

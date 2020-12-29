@@ -7,7 +7,7 @@ using RTL.TVMaze.Scraper.Application.Queries;
 namespace RTL.TVMaze.Scraper.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("shows")]
     public class TVShowController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -18,10 +18,11 @@ namespace RTL.TVMaze.Scraper.API.Controllers
         }
 
         [HttpGet]
+        [Route("with-cast-embedded")]
         public async Task<IActionResult> GetPaginatedListOfTVShows([FromQuery] GetPaginatedListOfTVShows request, CancellationToken cancellationToken)
         {
             var response = await _mediator.Send(request, cancellationToken);
-            return Ok(response);
+            return Ok(response.TVShows);
         }
     }
 }
