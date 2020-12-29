@@ -58,6 +58,7 @@ namespace RTL.TVMaze.Scraper.Application.HttpClients
 
         private async Task<GetShowsResponse> GetTVShowsFromApi(CancellationToken cancellationToken)
         {
+            //TODO: this only gets the first 250 results. Implement show page index. Implement at higher level.
             var apiResponse = await _httpClient.GetAsync("shows", cancellationToken);
             return JsonSerializer.Deserialize<GetShowsResponse>(await apiResponse.Content.ReadAsStringAsync());
         }
