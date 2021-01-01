@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
 using RTL.TVMaze.Scraper.Application.HttpClients;
+using RTL.TVMaze.Scraper.Application.Jobs;
 using RTL.TVMaze.Scraper.Application.Services;
 
 namespace RTL.TVMaze.Scraper.API
@@ -35,13 +35,14 @@ namespace RTL.TVMaze.Scraper.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient<ITVShowService, TVMazeClient>(options =>
+            services.AddHttpClient<ITVMazeClient, TVMazeClient>(options =>
                 {
                     options.BaseAddress = new Uri(Configuration.GetValue<string>("TVMaze:ApiBaseUri"));
                 })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(10))
                 .AddPolicyHandler(GetRetryPolicy());
 
+            services.AddTransient<ITVShowService, TVShowService>();
             services.AddMediatR(typeof(ITVShowService).Assembly);
             services.AddDistributedMemoryCache();
             services.AddControllers();
@@ -50,9 +51,11 @@ namespace RTL.TVMaze.Scraper.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TVMaze Scraper", Version = "v1" });
             });
+
+            services.AddHostedService<ScraperJob>();
         }
 
-        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -73,10 +76,6 @@ namespace RTL.TVMaze.Scraper.API
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "TVMaze Scraper");
             });
-
-            // Warm up cache
-            var tvShowService = app.ApplicationServices.GetService<ITVShowService>();
-            await tvShowService.GetTVShowsAsync(CancellationToken.None);
         }
     }
 }

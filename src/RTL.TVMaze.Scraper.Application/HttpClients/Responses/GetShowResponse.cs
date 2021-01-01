@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace RTL.TVMaze.Scraper.Application.Services.Responses
+namespace RTL.TVMaze.Scraper.Application.HttpClients.Responses
 {
     public class GetShowResponse
     {

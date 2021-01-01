@@ -22,7 +22,7 @@ namespace RTL.TVMaze.Scraper.API.Controllers
         public async Task<IActionResult> GetPaginatedListOfTVShows([FromQuery] GetPaginatedListOfTVShows request, CancellationToken cancellationToken)
         {
             var response = await _mediator.Send(request, cancellationToken);
-            return Ok(response.TVShows);
+            return Ok(response);
         }
     }
 }

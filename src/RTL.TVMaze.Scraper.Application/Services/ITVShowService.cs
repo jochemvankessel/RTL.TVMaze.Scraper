@@ -7,6 +7,6 @@ namespace RTL.TVMaze.Scraper.Application.Services
 {
     public interface ITVShowService
     {
-        Task<IList<TVShow>> GetTVShowsAsync(CancellationToken cancellationToken);
+        Task<List<TVShow>> GetTVShowsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken);
     }
 }

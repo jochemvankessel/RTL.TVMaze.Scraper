@@ -1,19 +1,19 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using RTL.TVMaze.Scraper.Application.Responses;
 using RTL.TVMaze.Scraper.Application.Services;
+using RTL.TVMaze.Scraper.Domain.Model;
 
 namespace RTL.TVMaze.Scraper.Application.Queries
 {
-    public class GetPaginatedListOfTVShows : IRequest<GetPaginatedListOfTVShowsResponse>
+    public class GetPaginatedListOfTVShows : IRequest<List<TVShow>>
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
     }
 
-    public class GetPaginatedListOfTVShowsHandler : IRequestHandler<GetPaginatedListOfTVShows, GetPaginatedListOfTVShowsResponse>
+    public class GetPaginatedListOfTVShowsHandler : IRequestHandler<GetPaginatedListOfTVShows, List<TVShow>>
     {
         private readonly ITVShowService _service;
 
@@ -22,14 +22,9 @@ namespace RTL.TVMaze.Scraper.Application.Queries
             _service = service;
         }
 
-        public async Task<GetPaginatedListOfTVShowsResponse> Handle(GetPaginatedListOfTVShows request, CancellationToken cancellationToken)
+        public async Task<List<TVShow>> Handle(GetPaginatedListOfTVShows request, CancellationToken cancellationToken)
         {
-            var tvShows = (await _service.GetTVShowsAsync(cancellationToken))
-                .Skip(request.PageIndex * request.PageSize)
-                .Take(request.PageSize)
-                .ToList();
-
-            return new GetPaginatedListOfTVShowsResponse(request.PageIndex, request.PageSize, tvShows);
+            return await _service.GetTVShowsAsync(request.PageIndex, request.PageSize, cancellationToken);
         }
     }
 }
