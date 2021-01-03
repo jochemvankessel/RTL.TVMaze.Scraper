@@ -4,4 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="EventFlow" Version="0.81.4483" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\Aggregates\TVShow\Specifications\" />
+  </ItemGroup>
+
 </Project>

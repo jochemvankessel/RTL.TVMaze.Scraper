@@ -1,7 +1,10 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using MediatR;
+using EventFlow.AspNetCore.Extensions;
+using EventFlow.DependencyInjection.Extensions;
+using EventFlow.Extensions;
+using EventFlow.Provided.Jobs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,9 +13,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
+using RTL.TVMaze.Scraper.Application.Commands;
 using RTL.TVMaze.Scraper.Application.HttpClients;
 using RTL.TVMaze.Scraper.Application.Jobs;
-using RTL.TVMaze.Scraper.Application.Services;
+using RTL.TVMaze.Scraper.Application.ReadModels;
+using RTL.TVMaze.Scraper.Domain.Model.Aggregates.TVShow;
 
 namespace RTL.TVMaze.Scraper.API
 {
@@ -42,17 +47,22 @@ namespace RTL.TVMaze.Scraper.API
                 .SetHandlerLifetime(TimeSpan.FromMinutes(10))
                 .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddTransient<ITVShowService, TVShowService>();
-            services.AddMediatR(typeof(ITVShowService).Assembly);
-            services.AddDistributedMemoryCache();
+            services.AddEventFlow(options =>
+            {
+                options.Configure(c => c.IsAsynchronousSubscribersEnabled = true);
+                options.AddDefaults(typeof(TVShowAggregate).Assembly);
+                options.AddDefaults(typeof(CreateTVShow).Assembly);
+                options.UseInMemoryReadStoreFor<InMemoryReadModelForTVShowAggregate>();
+                options.AddAspNetCore();
+            });
+
+            services.AddHostedService<ScraperJob>();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TVMaze Scraper", Version = "v1" });
             });
-
-            services.AddHostedService<ScraperJob>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
+using EventFlow.Queries;
 using Microsoft.AspNetCore.Mvc;
 using RTL.TVMaze.Scraper.Application.Queries;
 
@@ -10,18 +10,18 @@ namespace RTL.TVMaze.Scraper.API.Controllers
     [Route("shows")]
     public class TVShowController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IQueryProcessor _processor;
 
-        public TVShowController(IMediator mediator)
+        public TVShowController(IQueryProcessor processor)
         {
-            _mediator = mediator;
+            _processor = processor;
         }
 
         [HttpGet]
         [Route("with-cast-embedded")]
         public async Task<IActionResult> GetPaginatedListOfTVShows([FromQuery] GetPaginatedListOfTVShows request, CancellationToken cancellationToken)
         {
-            var response = await _mediator.Send(request, cancellationToken);
+            var response = await _processor.ProcessAsync(request, cancellationToken);
             return Ok(response);
         }
     }

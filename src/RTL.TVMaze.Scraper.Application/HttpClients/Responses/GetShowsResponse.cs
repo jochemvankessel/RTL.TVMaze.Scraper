@@ -11,5 +11,8 @@ namespace RTL.TVMaze.Scraper.Application.HttpClients.Responses
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
     }
 }

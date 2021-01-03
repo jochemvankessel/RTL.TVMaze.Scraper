@@ -1,30 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using RTL.TVMaze.Scraper.Application.Services;
-using RTL.TVMaze.Scraper.Domain.Model;
+using EventFlow.Queries;
+using EventFlow.ReadStores.InMemory;
+using RTL.TVMaze.Scraper.Application.ReadModels;
 
 namespace RTL.TVMaze.Scraper.Application.Queries
 {
-    public class GetPaginatedListOfTVShows : IRequest<List<TVShow>>
+    public class GetPaginatedListOfTVShows : IQuery<InMemoryReadModelForTVShowAggregate[]>
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
     }
 
-    public class GetPaginatedListOfTVShowsHandler : IRequestHandler<GetPaginatedListOfTVShows, List<TVShow>>
+    public class GetPaginatedListOfTVShowsHandler : IQueryHandler<GetPaginatedListOfTVShows, InMemoryReadModelForTVShowAggregate[]>
     {
-        private readonly ITVShowService _service;
+        private readonly IInMemoryReadStore<InMemoryReadModelForTVShowAggregate> _readModelStore;
 
-        public GetPaginatedListOfTVShowsHandler(ITVShowService service)
+        public GetPaginatedListOfTVShowsHandler(IInMemoryReadStore<InMemoryReadModelForTVShowAggregate> readModelStore)
         {
-            _service = service;
+            _readModelStore = readModelStore;
         }
 
-        public async Task<List<TVShow>> Handle(GetPaginatedListOfTVShows request, CancellationToken cancellationToken)
+        public async Task<InMemoryReadModelForTVShowAggregate[]> ExecuteQueryAsync(GetPaginatedListOfTVShows query, CancellationToken cancellationToken)
         {
-            return await _service.GetTVShowsAsync(request.PageIndex, request.PageSize, cancellationToken);
+            var result = await _readModelStore.FindAsync(aggregate => true, cancellationToken);
+            return result.Skip(query.PageIndex * query.PageSize).Take(query.PageSize).ToArray();
         }
     }
 }
